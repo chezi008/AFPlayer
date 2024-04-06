@@ -1,0 +1,10 @@
+ffmpeg -re -stream_loop -1 -i baby.mp4 -c copy -f rtsp rtsp://127.0.0.1:8554/test
+
+//h265
+ffmpeg -re -stream_loop -1 -i baby.mp4 -vcodec hevc -acodec aac -c copy -f rtsp rtsp://127.0.0.1:8554/test
+
+参数说明
+-re 是以流的方式读取
+-stream_loop -1 表示无限循环读取
+-i 就是输入的文件
+-f 格式化输出到哪里
