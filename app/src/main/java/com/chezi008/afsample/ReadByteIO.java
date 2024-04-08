@@ -40,7 +40,7 @@ public class ReadByteIO implements IAndroidIO {
 
     @Override
     public int read(byte[] buffer, int size) throws IOException {
-        Log.d(TAG, "read: "+size);
+        Log.d(TAG, "read buffer: "+size);
         byte[] tmpBytes = takeFirstWithLen(size); // 阻塞式读取，没有数据不渲染画面
         System.arraycopy(tmpBytes, 0, buffer, 0, size);
         return size;
@@ -75,7 +75,7 @@ public class ReadByteIO implements IAndroidIO {
     }
 
     public boolean addLast(byte[] bytes) { // 新收到的数据通过该接口，添加到缓存队列的队尾
-        Log.e(TAG, "addLast tmpList size " + bytes.length);
+//        Log.e(TAG, "addLast tmpList size " + bytes.length);
         for (byte aByte : bytes) {
             flvData.add(aByte);
         }

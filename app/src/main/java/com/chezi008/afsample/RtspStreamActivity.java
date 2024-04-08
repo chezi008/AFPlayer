@@ -29,7 +29,8 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class RtspStreamActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
     private static final String TAG = "RtspStreamActvity";
-    private  String url = "rtsp://admin:pqtel88886035@192.168.110.18:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
+//    private  String url = "rtsp://admin:pqtel88886035@192.168.110.18:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
+    private  String url = "rtsp://192.168.68.198:8554/test";
     private IjkMediaPlayer player;
     private Surface surface;
     private TextureView playView;
@@ -70,7 +71,7 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
         player = new IjkMediaPlayer();
         player.reset();
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzemaxduration", 100);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 25 * 1024);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 2*1024 * 1024);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 0);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 1);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", 1);
@@ -112,13 +113,13 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
 
         @Override
         public void onRtspVideoNalUnitReceived(@NonNull byte[] bytes, int i, int i1, long l) {
-            Log.d(TAG, "onRtspVideoNalUnitReceived: "+bytes.length);
+//            Log.d(TAG, "onRtspVideoNalUnitReceived: "+bytes.length);
             ReadByteIO.get().addLast(bytes);
         }
 
         @Override
         public void onRtspAudioSampleReceived(@NonNull byte[] bytes, int i, int i1, long l) {
-            Log.d(TAG, "onRtspAudioSampleReceived: ");
+//            Log.d(TAG, "onRtspAudioSampleReceived: ");
         }
 
         @Override
@@ -142,7 +143,7 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
         public void run() {
             AtomicBoolean stopped = new AtomicBoolean(false);
             try {
-                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.110.18", 554, 10000);
+                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.68.198", 8554, 10000);
                 RtspClient rtspClient = new RtspClient.Builder(socketAndConnect, url, stopped, rtspClientListener)
                         .requestVideo(true)
 //                            .requestAudio(true)
