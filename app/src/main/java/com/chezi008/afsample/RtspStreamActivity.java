@@ -71,14 +71,21 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
         player = new IjkMediaPlayer();
         player.reset();
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzemaxduration", 100);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 2*1024 * 1024);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 25 * 1024);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 0);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", 1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "sync-av-start", 0);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec",1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
+//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 1);
+//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", 1);
+//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "sync-av-start", 0);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec",0);
+//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "fast",1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-buffer-size",0);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mmin-frames",2);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "infbuf",1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "skip_loop_filter",48);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "flush_packets",1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering",0);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "ijkio,crypto,file,http,https,tcp,tls,udp"); // 属性设置支持，转入我们自定义的播放类
 
         player.setSurface(this.surface);
