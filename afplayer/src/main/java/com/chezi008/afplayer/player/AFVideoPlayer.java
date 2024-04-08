@@ -1,5 +1,6 @@
 package com.chezi008.afplayer.player;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 
 import com.chezi008.afplayer.R;
 import com.chezi008.afplayer.app.Settings;
@@ -104,7 +106,6 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
     private OnMediaListener mediaListener;
     private ImageView mFrame;
     private ImageView mStartRecord;
-    private ImageView mEndRecord;
     private IjkMediaPlayer ijkMediaPlayer;
     private String mRecordPath;   //录像地址
     private ImageView mPictures;
@@ -218,11 +219,12 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
             Log.e("tag", "mStartRecord====" + mStartRecord.getTag());
             if ("end".equals(mStartRecord.getTag())) {
                 getEndRecord("onReceive");
-            }else {
-                mediaListener.getEndRecord(mStartRecord, "结束录像","正常切换url");
+            } else {
+                mediaListener.getEndRecord(mStartRecord, "结束录像", "正常切换url");
             }
         }
     }
+
     /**
      * 背景色
      */
@@ -246,7 +248,6 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
     public View getBackIv() {
         return mBackIv;
     }
-
 
 
     public ImageView getRCImage() {
@@ -484,8 +485,8 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
                 @Override
                 public void run() {
                     super.run();
-                    Bitmap srcBitmap = Bitmap.createBitmap(1920,
-                            1080, Bitmap.Config.ARGB_8888);
+                    Bitmap srcBitmap = Bitmap.createBitmap(1280,
+                            720, Bitmap.Config.ARGB_8888);
                     boolean currentFrame = ijkMediaPlayer.getCurrentFrame(srcBitmap);
                     Log.e("TAG", "=======0===currentFrame====" + currentFrame);
                     //插入相册 解决了华为截图显示问题
@@ -493,7 +494,6 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
                         mediaListener.getFrame(currentFrame);
                     }
                     MediaStore.Images.Media.insertImage(mContext.getContentResolver(), srcBitmap, "", "");
-
                 }
             }.start();
         } else {
@@ -507,7 +507,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
     public void getStartRecord() {
 
         if (ijkMediaPlayer.isPlaying()) {
-            File file = new File(Environment.getExternalStorageDirectory(), "MyMovies");
+            File file = new File(mActivity.getExternalCacheDir(), "MyMovies");
 //        File file = new File(Environment.getExternalStorageDirectory() + "/MyMovies");
 //        /storage/emulated/0/RecordVideos
             Log.e(TAG, "===file.exists()===" + file.exists());
@@ -535,6 +535,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
             SharePreferenceUtil.put(mContext, SharePreferenceUtil.Key_Record, "start");
             ijkMediaPlayer.startRecord(mRecordPath);
             mStartRecord.setTag("end");
+            mStartRecord.setImageResource(R.mipmap.icon_record_pre);
             if (mediaListener != null) {
                 mediaListener.getStartRecord(mStartRecord, "开始录像");
             }
@@ -552,13 +553,14 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
         ijkMediaPlayer.stopRecord();
         scanFile(mContext, mRecordPath);
         mStartRecord.setTag("start");
-        if (type.equals("onReceive")){
+        mStartRecord.setImageResource(R.mipmap.icon_record_nore);
+        if (type.equals("onReceive")) {
             if (mediaListener != null) {
-                mediaListener.getEndRecord(mStartRecord, "结束录像",type);
+                mediaListener.getEndRecord(mStartRecord, "结束录像", type);
             }
-        }else {
+        } else {
             if (mediaListener != null) {
-                mediaListener.getEndRecord(mStartRecord, "结束录像",type);
+                mediaListener.getEndRecord(mStartRecord, "结束录像", type);
             }
         }
 
@@ -763,10 +765,6 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
             }
         }
     };
-
-
-
-
 
 
     /**

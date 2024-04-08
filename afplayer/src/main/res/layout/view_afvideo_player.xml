@@ -29,7 +29,7 @@
     <LinearLayout
         android:id="@+id/nur_video_toolbarControl"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:background="#8A000000"
         android:orientation="horizontal">
 
@@ -82,7 +82,7 @@
     <LinearLayout
         android:id="@+id/nur_video_bottomControl"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:layout_alignParentBottom="true"
         android:background="#8A000000"
         android:gravity="center"
@@ -91,8 +91,8 @@
 
         <com.chezi008.afplayer.player.NurPlayButton
             android:id="@+id/nur_video_playIv"
-            android:layout_width="40dp"
-            android:layout_height="40dp" />
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
 
         <View
             android:layout_width="0dp"
@@ -100,8 +100,8 @@
             android:layout_weight="1"/>
         <ImageView
             android:id="@+id/nur_video_ktvIv"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:padding="12dp"
             android:src="@mipmap/nur_ic_microphone"
@@ -110,10 +110,10 @@
 
         <ImageView
             android:id="@+id/nur_video_changeWindowTv"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:padding="12dp"
+            android:padding="5dp"
             android:src="@mipmap/nur_ic_fangda" />
 
 
@@ -130,8 +130,6 @@
         android:background="@drawable/nur_video_border_radius"
         android:padding="10dp"
         android:src="@mipmap/nur_ic_unlock" />
-
-
 
 
     <ImageView
