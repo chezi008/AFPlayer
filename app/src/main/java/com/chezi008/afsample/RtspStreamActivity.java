@@ -27,13 +27,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
+/**
+ * 样列参照:
+ * https://blog.csdn.net/qq_19154605/article/details/121489360
+ * android 使用 IJKPlayer 播放视频流
+ */
 public class RtspStreamActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
     private static final String TAG = "RtspStreamActvity";
-//    private  String url = "rtsp://admin:pqtel88886035@192.168.110.18:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
-    private  String url = "rtsp://192.168.68.198:8554/test";
+    private String url = "rtsp://admin:pqtel88886035@192.168.110.18:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
+    //    private  String url = "rtsp://192.168.68.198:8554/test";
     private IjkMediaPlayer player;
     private Surface surface;
     private TextureView playView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +51,7 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
 
         startRtsp();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -60,12 +67,19 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
             play();  // 存在 surface 实例再做播放
         }
     }
+
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) { }
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+    }
+
     @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {return false; }
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        return false;
+    }
+
     @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) { }
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    }
 
     private void play() {
         player = new IjkMediaPlayer();
@@ -73,19 +87,12 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzemaxduration", 100);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 25 * 1024);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 0);
-//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 1);
-//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", 1);
-//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "sync-av-start", 0);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec",0);
-//        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "fast",1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-buffer-size",0);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mmin-frames",2);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "infbuf",1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "skip_loop_filter",48);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "flush_packets",1);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering",0);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", 1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "sync-av-start", 0);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "ijkio,crypto,file,http,https,tcp,tls,udp"); // 属性设置支持，转入我们自定义的播放类
 
         player.setSurface(this.surface);
@@ -107,7 +114,7 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
         Executors.newSingleThreadExecutor().execute(socketRunnable);
     }
 
-    private  RtspClient.RtspClientListener rtspClientListener = new RtspClient.RtspClientListener() {
+    private RtspClient.RtspClientListener rtspClientListener = new RtspClient.RtspClientListener() {
         @Override
         public void onRtspConnecting() {
             Log.d(TAG, "onRtspConnecting: ");
@@ -150,7 +157,8 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
         public void run() {
             AtomicBoolean stopped = new AtomicBoolean(false);
             try {
-                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.68.198", 8554, 10000);
+//                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.68.198", 8554, 10000);
+                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.110.18", 554, 10000);
                 RtspClient rtspClient = new RtspClient.Builder(socketAndConnect, url, stopped, rtspClientListener)
                         .requestVideo(true)
 //                            .requestAudio(true)

@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import kotlin.jvm.Synchronized;
 import tv.danmaku.ijk.media.player.misc.IAndroidIO;
@@ -14,7 +15,7 @@ public class ReadByteIO implements IAndroidIO {
     private static final String TAG = "ReadByteIO";
 
     // 内存队列，用于缓存获取到的流数据，要实现追帧效果，只需要根据策略丢弃本地缓存的内容即可
-    private LinkedBlockingDeque<Byte> flvData  = new LinkedBlockingDeque<>();
+    private LinkedBlockingQueue<byte[]> flvData  = new LinkedBlockingQueue<>(200);
 
 
     private ReadByteIO(){
@@ -40,15 +41,24 @@ public class ReadByteIO implements IAndroidIO {
 
     @Override
     public int read(byte[] buffer, int size) throws IOException {
-        Log.d(TAG, "read buffer: "+size);
-        byte[] tmpBytes = takeFirstWithLen(size); // 阻塞式读取，没有数据不渲染画面
-        System.arraycopy(tmpBytes, 0, buffer, 0, size);
-        return size;
+        Log.d(TAG, "read buffer: "+size+",flvData capacity：" +flvData.size());
+        byte[] tmpBytes = new byte[0]; // 阻塞式读取，没有数据不渲染画面
+        try {
+            tmpBytes = flvData.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (tmpBytes.length>size){
+            System.arraycopy(tmpBytes, 0, buffer, 0, size);
+            return size;
+        }
+        System.arraycopy(tmpBytes, 0, buffer, 0, tmpBytes.length);
+        return tmpBytes.length;
     }
 
     @Override
     public long seek(long offset, int whence) throws IOException {
-        return 99565222;
+        return 0;
     }
 
     @Override
@@ -57,28 +67,9 @@ public class ReadByteIO implements IAndroidIO {
     }
 
 
-    /**
-     * 取 byte 数据用于界面渲染
-     * @param len
-     * @return
-     */
-    private byte[] takeFirstWithLen(int len) {
-        byte[] byteList = new byte[len];
-        for (int i = 0; i < byteList.length; i++) {
-            try {
-                byteList[i] = flvData.take();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return byteList;
-    }
-
     public boolean addLast(byte[] bytes) { // 新收到的数据通过该接口，添加到缓存队列的队尾
 //        Log.e(TAG, "addLast tmpList size " + bytes.length);
-        for (byte aByte : bytes) {
-            flvData.add(aByte);
-        }
+        flvData.add(bytes);
         return true;
     }
 
