@@ -37,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
         XXPermissions.with(this)
                 // 申请单个权限
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
-                // 申请多个权限
-                .permission(Permission.CAMERA)
                 // 设置权限请求拦截器（局部设置）
                 //.interceptor(new PermissionInterceptor())
                 // 设置不触发错误检测机制（局部设置）
@@ -51,17 +49,17 @@ public class MainActivity extends AppCompatActivity {
                             toast("获取部分权限成功，但部分权限未正常授予");
                             return;
                         }
-                        toast("获取录音和日历权限成功");
+                        toast("获取文件权限成功");
                     }
 
                     @Override
                     public void onDenied(List<String> permissions, boolean never) {
                         if (never) {
-                            toast("被永久拒绝授权，请手动授予录音和日历权限");
+                            toast("被永久拒绝授权，请手动授予文件权限");
                             // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(MainActivity.this, permissions);
                         } else {
-                            toast("获取录音和日历权限失败");
+                            toast("获取文件权限失败");
                         }
                     }
                 });
