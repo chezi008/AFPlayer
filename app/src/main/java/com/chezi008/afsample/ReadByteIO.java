@@ -15,10 +15,10 @@ public class ReadByteIO implements IAndroidIO {
     private static final String TAG = "ReadByteIO";
 
     // 内存队列，用于缓存获取到的流数据，要实现追帧效果，只需要根据策略丢弃本地缓存的内容即可
-    private LinkedBlockingQueue<byte[]> flvData  = new LinkedBlockingQueue<>(200);
+    private LinkedBlockingDeque<byte[]> flvData = new LinkedBlockingDeque<>(50);
 
 
-    private ReadByteIO(){
+    private ReadByteIO() {
 
     }
 
@@ -26,7 +26,7 @@ public class ReadByteIO implements IAndroidIO {
         return ReadByteIOHolder.instance;
     }
 
-    private static class ReadByteIOHolder{
+    private static class ReadByteIOHolder {
         private final static ReadByteIO instance = new ReadByteIO();
     }
 
@@ -41,15 +41,19 @@ public class ReadByteIO implements IAndroidIO {
 
     @Override
     public int read(byte[] buffer, int size) throws IOException {
-        Log.d(TAG, "read buffer: "+size+",flvData capacity：" +flvData.size());
+        Log.d(TAG, "read buffer: " + size + ",flvData capacity：" + flvData.size());
         byte[] tmpBytes = new byte[0]; // 阻塞式读取，没有数据不渲染画面
         try {
             tmpBytes = flvData.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (tmpBytes.length>size){
+        if (tmpBytes.length > size) {
             System.arraycopy(tmpBytes, 0, buffer, 0, size);
+            byte[] left = new byte[tmpBytes.length - size];
+            System.arraycopy(tmpBytes, size, left, 0, left.length);
+            flvData.addFirst(left);
+            Log.w(TAG, "read: tmpBytes.length>size 数据拆分" + tmpBytes.length);
             return size;
         }
         System.arraycopy(tmpBytes, 0, buffer, 0, tmpBytes.length);

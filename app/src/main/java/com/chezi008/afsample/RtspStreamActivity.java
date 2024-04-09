@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,15 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alexvas.rtsp.RtspClient;
 import com.alexvas.utils.NetUtils;
-import com.chezi008.afplayer.listener.OnMediaListener;
-import com.chezi008.afplayer.player.AFVideoPlayer;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -34,7 +30,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  */
 public class RtspStreamActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
     private static final String TAG = "RtspStreamActvity";
-    private String url = "rtsp://admin:pqtel88886035@192.168.110.18:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
+    private String url = "rtsp://admin:pqtel88886035@192.168.110.12:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
     //    private  String url = "rtsp://192.168.68.198:8554/test";
     private IjkMediaPlayer player;
     private Surface surface;
@@ -158,7 +154,7 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
             AtomicBoolean stopped = new AtomicBoolean(false);
             try {
 //                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.68.198", 8554, 10000);
-                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.110.18", 554, 10000);
+                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.110.12", 554, 10000);
                 RtspClient rtspClient = new RtspClient.Builder(socketAndConnect, url, stopped, rtspClientListener)
                         .requestVideo(true)
 //                            .requestAudio(true)
