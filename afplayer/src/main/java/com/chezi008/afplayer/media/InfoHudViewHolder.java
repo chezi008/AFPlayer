@@ -154,9 +154,10 @@ public class InfoHudViewHolder {
                     setRowValue(R.string.tcp_speed, String.format(Locale.US, "%s", formatedSpeed(tcpSpeed, 1000)));
                     setRowValue(R.string.bit_rate, String.format(Locale.US, "%.2f kbs", bitRate/1000f));
 
+
                     Log.d(TAG, "handleMessage: "+mp.getTcpSpeed());
                     mHandler.removeMessages(MSG_UPDATE_HUD);
-                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_HUD, 500);
+                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_HUD, 1000);
                 }
             }
         }
