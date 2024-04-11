@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +65,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
     private TextView mTitleView;
     private NurPlayButton mPlayBtn;
     private ENDownloadView mProgressBar;
+    private RelativeLayout mMaxAdverLayout;
     private Context mContext;
     private boolean controlIsShow = true;//控制器在是否显示
     private boolean isLock;
@@ -169,6 +171,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
 
 
         mProgressBar = findViewById(R.id.nur_video_progressBar);
+        mMaxAdverLayout = findViewById(R.id.nur_video_max_adver_layout);
 
         //截图录像相关
         mFrame = findViewById(R.id.nur_video_view_frame);
@@ -238,6 +241,21 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
      */
     public View getBackIv() {
         return mBackIv;
+    }
+
+
+    /**
+     * 大广告view
+     */
+    public RelativeLayout getMaxADLayout() {
+        return mMaxAdverLayout;
+    }
+
+    /**
+     * 大广告view
+     */
+    public void setMaxADLayout(View v) {
+        mMaxAdverLayout.addView(v);
     }
 
 

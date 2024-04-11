@@ -29,7 +29,9 @@
             android:exported="false" />
         <activity
             android:name=".AFPlayerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

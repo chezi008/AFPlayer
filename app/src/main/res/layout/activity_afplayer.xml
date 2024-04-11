@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.chezi008.afsample.AFPlayerActivity">
 
-    <com.chezi008.afplayer.player.AFVideoPlayer
-        android:id="@+id/afPlayer"
+    <com.chezi008.afplayer.player.AFVideoView
+        android:id="@+id/afVideoView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"/>
-</FrameLayout>
+        android:layout_height="250dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="start"
+            android:onClick="startV"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="stop"
+            android:onClick="stopV"/>
+    </LinearLayout>
+</LinearLayout>

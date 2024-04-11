@@ -18,4 +18,8 @@
         <attr name="remove_back_btn" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="AFVideoView">
+        <attr name="v_height" format="dimension" />
+        <attr name="v_bg_color" format="color" />
+    </declare-styleable>
 </resources>
