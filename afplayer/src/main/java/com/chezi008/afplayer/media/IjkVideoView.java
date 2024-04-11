@@ -42,7 +42,7 @@ import androidx.appcompat.app.AlertDialog;
 
 
 import com.chezi008.afplayer.R;
-import com.chezi008.afplayer.app.Settings;
+import com.chezi008.afplayer.app.AFSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,7 +112,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     // private RenderingWidget.OnChangedListener mSubtitlesChangedListener;
 
     private Context mAppContext;
-    private Settings mSettings;
+    private AFSettings mAFSettings;
     private IRenderView mRenderView;
     private int mVideoSarNum;
     private int mVideoSarDen;
@@ -155,7 +155,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     private void initVideoView(Context context) {
         mAppContext = context.getApplicationContext();
-        mSettings = new Settings(mAppContext);
+        mAFSettings = new AFSettings(mAppContext);
 
         initBackground();
         initRenders();
@@ -314,7 +314,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
         try {
-            mMediaPlayer = createPlayer(mSettings.getPlayer());
+            mMediaPlayer = createPlayer(mAFSettings.getPlayer());
 
             // TODO: create SubtitleController in MediaPlayer, but we need
             // a context for the subtitle renderers
@@ -333,7 +333,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             mCurrentBufferPercentage = 0;
             String scheme = mUri.getScheme();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    mSettings.getUsingMediaDataSource() &&
+                    mAFSettings.getUsingMediaDataSource() &&
                     (TextUtils.isEmpty(scheme) || scheme.equalsIgnoreCase("file"))) {
                 IMediaDataSource dataSource = new FileMediaDataSource(new File(mUri.toString()));
                 mMediaPlayer.setDataSource(dataSource);
@@ -915,11 +915,11 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             IRenderView.AR_ASPECT_FIT_PARENT,
             IRenderView.AR_ASPECT_FILL_PARENT,
             IRenderView.AR_ASPECT_WRAP_CONTENT,
-            // IRenderView.AR_MATCH_PARENT,
+             IRenderView.AR_MATCH_PARENT,
             IRenderView.AR_16_9_FIT_PARENT,
             IRenderView.AR_4_3_FIT_PARENT};
     private int mCurrentAspectRatioIndex = 0;
-    private int mCurrentAspectRatio = s_allAspectRatio[0];
+    private int mCurrentAspectRatio = s_allAspectRatio[3];
 
     public int toggleAspectRatio() {
         mCurrentAspectRatioIndex++;
@@ -945,11 +945,11 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private void initRenders() {
         mAllRenders.clear();
 
-        if (mSettings.getEnableSurfaceView())
+        if (mAFSettings.getEnableSurfaceView())
             mAllRenders.add(RENDER_SURFACE_VIEW);
-        if (mSettings.getEnableTextureView() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+        if (mAFSettings.getEnableTextureView() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             mAllRenders.add(RENDER_TEXTURE_VIEW);
-        if (mSettings.getEnableNoView())
+        if (mAFSettings.getEnableNoView())
             mAllRenders.add(RENDER_NONE);
 
         if (mAllRenders.isEmpty())
@@ -997,20 +997,20 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         if (mRenderView != null)
             mRenderView.getView().invalidate();
         openVideo();
-        return mSettings.getPlayer();
+        return mAFSettings.getPlayer();
     }
 
     @NonNull
     public static String getPlayerText(Context context, int player) {
         String text;
         switch (player) {
-            case Settings.PV_PLAYER__AndroidMediaPlayer:
+            case AFSettings.PV_PLAYER__AndroidMediaPlayer:
                 text = context.getString(R.string.VideoView_player_AndroidMediaPlayer);
                 break;
-            case Settings.PV_PLAYER__IjkMediaPlayer:
+            case AFSettings.PV_PLAYER__IjkMediaPlayer:
                 text = context.getString(R.string.VideoView_player_IjkMediaPlayer);
                 break;
-            case Settings.PV_PLAYER__IjkExoMediaPlayer:
+            case AFSettings.PV_PLAYER__IjkExoMediaPlayer:
                 text = context.getString(R.string.VideoView_player_IjkExoMediaPlayer);
                 break;
             default:
@@ -1025,7 +1025,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         if (ijkMediaPlayer != null) {
             return ijkMediaPlayer;
         } else {
-            mMediaPlayer = createPlayer(mSettings.getPlayer());
+            mMediaPlayer = createPlayer(mAFSettings.getPlayer());
             return ijkMediaPlayer;
         }
     }
@@ -1046,20 +1046,20 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 //                mediaPlayer = androidMediaPlayer;
 //            }
 //            break;
-            case Settings.PV_PLAYER__IjkMediaPlayer:
+            case AFSettings.PV_PLAYER__IjkMediaPlayer:
             default: {
                 if (mUri != null) {
                     ijkMediaPlayer = new IjkMediaPlayer();
                     ijkMediaPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_DEBUG);
 
-                    if (mSettings.getUsingMediaCodec()) {
+                    if (mAFSettings.getUsingMediaCodec()) {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
-                        if (mSettings.getUsingMediaCodecAutoRotate()) {
+                        if (mAFSettings.getUsingMediaCodecAutoRotate()) {
                             ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
                         } else {
                             ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);
                         }
-                        if (mSettings.getMediaCodecHandleResolutionChange()) {
+                        if (mAFSettings.getMediaCodecHandleResolutionChange()) {
                             ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
                         } else {
                             ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
@@ -1068,13 +1068,13 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
                     }
 
-                    if (mSettings.getUsingOpenSLES()) {
+                    if (mAFSettings.getUsingOpenSLES()) {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1);
                     } else {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 0);
                     }
 
-                    String pixelFormat = mSettings.getPixelFormat();
+                    String pixelFormat = mAFSettings.getPixelFormat();
                     if (TextUtils.isEmpty(pixelFormat)) {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", IjkMediaPlayer.SDL_FCC_RV32);
                     } else {
@@ -1096,7 +1096,8 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "max-buffer-size", 0);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "min-frames", 2);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "infbuf", 1);
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
+//                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
+//                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_flags", "prefer_tcp");
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzedmaxduration", 100);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
@@ -1106,13 +1107,14 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                     ijkMediaPlayer.setOption(1, "flush_packets", 1L);
                     ijkMediaPlayer.setOption(4, "packet-buffering", 0L);
                     ijkMediaPlayer.setOption(4, "framedrop", 1L);
+//                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "rtsp,crypto,file,http,https,tcp,tls,udp"); // 属性设置支持，转入我们自定义的播放类
                 }
                 mediaPlayer = ijkMediaPlayer;
             }
             break;
         }
 
-        if (mSettings.getEnableDetachedSurfaceTextureView()) {
+        if (mAFSettings.getEnableDetachedSurfaceTextureView()) {
             mediaPlayer = new TextureMediaPlayer(mediaPlayer);
         }
 
@@ -1126,7 +1128,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private boolean mEnableBackgroundPlay = false;
 
     private void initBackground() {
-        mEnableBackgroundPlay = mSettings.getEnableBackgroundPlay();
+        mEnableBackgroundPlay = mAFSettings.getEnableBackgroundPlay();
         if (mEnableBackgroundPlay) {
             MediaPlayerService.intentToStart(getContext());
             mMediaPlayer = MediaPlayerService.getMediaPlayer();

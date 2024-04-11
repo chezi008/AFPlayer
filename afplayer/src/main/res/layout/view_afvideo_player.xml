@@ -5,6 +5,11 @@
     android:layout_height="match_parent">
 
 
+    <com.chezi008.afplayer.media.IjkVideoView
+        android:id="@+id/nur_ijk_video_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
     <TableLayout
         android:id="@+id/hud_view"
         android:layout_width="wrap_content"
@@ -12,14 +17,7 @@
         android:layout_gravity="bottom|center"
         android:background="@color/ijk_transparent_dark"
         android:padding="8dp"
-        android:visibility="invisible" />
-
-    <com.chezi008.afplayer.media.IjkVideoView
-        android:id="@+id/nur_ijk_video_player"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
-
+        android:visibility="visible" />
     <ImageView
         android:id="@+id/nur_video_bgImage"
         android:layout_width="match_parent"
@@ -29,7 +27,7 @@
     <LinearLayout
         android:id="@+id/nur_video_toolbarControl"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="40dp"
         android:background="#8A000000"
         android:orientation="horizontal">
 
@@ -49,10 +47,11 @@
         <TextView
             android:id="@+id/tvKbs"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="KB/S"
             android:textColor="@android:color/white"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:gravity="center"/>
         <ImageView
             android:id="@+id/nur_video_view_frame"
             android:layout_width="wrap_content"
@@ -75,14 +74,15 @@
             android:layout_height="match_parent"
             android:paddingHorizontal="10dp"
             android:src="@drawable/selector_goto_pictures"
-            android:text="相册 " />
+            android:text="相册 "
+            android:visibility="gone"/>
     </LinearLayout>
 
 
     <LinearLayout
         android:id="@+id/nur_video_bottomControl"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:background="#8A000000"
         android:gravity="center"
@@ -91,8 +91,8 @@
 
         <com.chezi008.afplayer.player.NurPlayButton
             android:id="@+id/nur_video_playIv"
-            android:layout_width="30dp"
-            android:layout_height="30dp" />
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
 
         <View
             android:layout_width="0dp"
@@ -113,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:padding="5dp"
+            android:padding="10dp"
             android:src="@mipmap/nur_ic_fangda" />
 
 
@@ -129,7 +129,8 @@
         android:layout_marginLeft="10dp"
         android:background="@drawable/nur_video_border_radius"
         android:padding="10dp"
-        android:src="@mipmap/nur_ic_unlock" />
+        android:src="@mipmap/nur_ic_unlock"
+        android:visibility="gone"/>
 
 
     <ImageView

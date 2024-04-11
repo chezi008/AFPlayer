@@ -24,7 +24,7 @@ import android.preference.PreferenceManager;
 import com.chezi008.afplayer.R;
 
 
-public class Settings {
+public class AFSettings {
     private Context mAppContext;
     private SharedPreferences mSharedPreferences;
 
@@ -33,7 +33,7 @@ public class Settings {
     public static final int PV_PLAYER__IjkMediaPlayer = 2;
     public static final int PV_PLAYER__IjkExoMediaPlayer = 3;
 
-    public Settings(Context context) {
+    public AFSettings(Context context) {
         mAppContext = context.getApplicationContext();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mAppContext);
     }

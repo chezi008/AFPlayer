@@ -1,6 +1,5 @@
 package com.chezi008.afplayer.player;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -10,32 +9,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
 
 import com.chezi008.afplayer.R;
-import com.chezi008.afplayer.app.Settings;
+import com.chezi008.afplayer.app.AFSettings;
 import com.chezi008.afplayer.listener.OnMediaListener;
 import com.chezi008.afplayer.media.IjkVideoView;
 import com.chezi008.afplayer.utils.ScreenSizeIjkplayerUtil;
@@ -124,7 +115,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
         super(context, attrs, defStyleAttr);
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.view_afvideo_player, this);
-        Settings mSettings = new Settings(context);
+        AFSettings mAFSettings = new AFSettings(context);
         mUiHandler = new Handler();
         mControlHandler = new Handler();
         initLayout();
@@ -152,7 +143,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
      */
     private void initLayout() {
         mVideoView = findViewById(R.id.nur_ijk_video_player);
-        mVideoView.setHudView((TableLayout) findViewById(R.id.hud_view));
+        mVideoView.setHudView(findViewById(R.id.hud_view));
 
         mTitleView = findViewById(R.id.nur_videoName);
         mVolumeIV = findViewById(R.id.nur_video_ktvIv);
@@ -690,7 +681,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
             startAnim(animator);
         }
         controlIsShow = !controlIsShow;
-        autoDismiss();
+//        autoDismiss();
     }
 
     /**

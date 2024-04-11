@@ -34,7 +34,7 @@ import androidx.annotation.Nullable;
 
 
 import com.chezi008.afplayer.R;
-import com.chezi008.afplayer.app.Settings;
+import com.chezi008.afplayer.app.AFSettings;
 import com.chezi008.afplayer.listener.OnMediaListener;
 import com.chezi008.afplayer.media.IjkVideoView;
 import com.chezi008.afplayer.utils.ScreenSizeIjkplayerUtil;
@@ -145,7 +145,7 @@ public class NurVideoPlayer extends LinearLayout implements View.OnClickListener
         super(context, attrs, defStyleAttr);
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.nur_video_layout, this);
-        Settings mSettings = new Settings(context);
+        AFSettings mAFSettings = new AFSettings(context);
         mUiHandler = new Handler();
         mControlHandler = new Handler();
         initLayout();

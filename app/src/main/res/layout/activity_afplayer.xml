@@ -8,6 +8,6 @@
 
     <com.chezi008.afplayer.player.AFVideoPlayer
         android:id="@+id/afPlayer"
-        android:layout_width="200dp"
-        android:layout_height="200dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
 </FrameLayout>

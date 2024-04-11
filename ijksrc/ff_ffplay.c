@@ -3098,6 +3098,7 @@ static int read_thread(void *arg)
     }
     ic->interrupt_callback.callback = decode_interrupt_cb;
     ic->interrupt_callback.opaque = is;
+    av_log(NULL, AV_LOG_FATAL, "read_thread,decode_interrupt_cb=%p, op=%p\n", decode_interrupt_cb, is);
     if (!av_dict_get(ffp->format_opts, "scan_all_pmts", NULL, AV_DICT_MATCH_CASE)) {
         av_dict_set(&ffp->format_opts, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
         scan_all_pmts_set = 1;
@@ -3625,6 +3626,11 @@ static int read_thread(void *arg)
         }
 
         ffp_statistic_l(ffp);
+        //chezi008 统计
+        if (pkt->size > 0) {
+            ffp->stat.byte_count += pkt->size;
+            SDL_SpeedSampler2Add(&ffp->stat.tcp_read_sampler, pkt->size);
+        }
 
         if (ffp->ijkmeta_delay_init && !init_ijkmeta &&
                 (ffp->first_video_frame_rendered || !is->video_st) && (ffp->first_audio_frame_rendered || !is->audio_st)) {
@@ -4077,12 +4083,14 @@ static AVDictionary **ffp_get_opt_dict(FFPlayer *ffp, int opt_category)
 
 static int app_func_event(AVApplicationContext *h, int message ,void *data, size_t size)
 {
+    av_log(NULL, AV_LOG_DEBUG, "app_func_event 1 \n");
     if (!h || !h->opaque || !data)
         return 0;
-
+   av_log(NULL, AV_LOG_DEBUG, "app_func_event 2 \n");
     FFPlayer *ffp = (FFPlayer *)h->opaque;
     if (!ffp->inject_opaque)
         return 0;
+   av_log(ffp, AV_LOG_DEBUG, "app_func_event 3 message:%d \n",message);
     if (message == AVAPP_EVENT_IO_TRAFFIC && sizeof(AVAppIOTraffic) == size) {
         AVAppIOTraffic *event = (AVAppIOTraffic *)(intptr_t)data;
         if (event->bytes > 0) {
@@ -4100,6 +4108,7 @@ static int app_func_event(AVApplicationContext *h, int message ,void *data, size
 
 static int ijkio_app_func_event(IjkIOApplicationContext *h, int message ,void *data, size_t size)
 {
+    av_log(NULL, AV_LOG_DEBUG, "ijkio_app_func_event 1 \n");
     if (!h || !h->opaque || !data)
         return 0;
 
@@ -4167,6 +4176,7 @@ void *ffp_set_ijkio_inject_opaque(FFPlayer *ffp, void *opaque)
 
 void *ffp_set_inject_opaque(FFPlayer *ffp, void *opaque)
 {
+    av_log(ffp, AV_LOG_ERROR, "ffp_set_inject_opaque: start\n");
     if (!ffp)
         return NULL;
     void *prev_weak_thiz = ffp->inject_opaque;
@@ -4175,7 +4185,7 @@ void *ffp_set_inject_opaque(FFPlayer *ffp, void *opaque)
     av_application_closep(&ffp->app_ctx);
     av_application_open(&ffp->app_ctx, ffp);
     ffp_set_option_intptr(ffp, FFP_OPT_CATEGORY_FORMAT, "ijkapplication", (uint64_t)(intptr_t)ffp->app_ctx);
-
+    av_log(ffp, AV_LOG_ERROR, "ffp_set_inject_opaque: test\n");
     ffp->app_ctx->func_on_app_event = app_func_event;
     return prev_weak_thiz;
 }
