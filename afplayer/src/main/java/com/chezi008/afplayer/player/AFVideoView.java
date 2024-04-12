@@ -81,6 +81,7 @@ public class AFVideoView extends LinearLayout implements View.OnClickListener {
         mIvRes.setImageResource(R.mipmap.af_ic_res_add);
         mVideoView.getMaxADLayout().addView(mIvRes);
         mVideoView.getMaxADLayout().setGravity(Gravity.CENTER);
+        mVideoView.getMaxADLayout().setVisibility(VISIBLE);
 
         mVolumeControl.setOnClickListener(this);
         mVolumeControl.setId(ID_VOLUME_CONTROL);
@@ -119,8 +120,8 @@ public class AFVideoView extends LinearLayout implements View.OnClickListener {
      */
     public void setUp(Activity activity, Uri uri, String title) {
         this.mActivity = activity;
-        mVideoView.initPlayer(activity, uri, title);
         mVideoView.getMaxADLayout().setVisibility(GONE);
+        mVideoView.initPlayer(activity, uri, title);
     }
 
 

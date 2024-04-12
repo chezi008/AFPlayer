@@ -60,10 +60,10 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
     private Context context;
     private IjkVideoView mVideoView;
     private View mTitleControl, mBottomControl, mVolumeControl, mCenterSBLayout, mLayoutBox, mCenterPlayBtn;  //mProgressBar,
-    private ImageView mBgImage, mBackIv, mVolumeIV, mScreenView, mLockImage, mRCImage;
+    private ImageView mBgImage, mBackIv, mVolumeIV, mScreenView, mLockImage, mRCImage,mIvStop;
 
     private TextView mTitleView;
-    private NurPlayButton mPlayBtn;
+//    private NurPlayButton mPlayBtn;
     private ENDownloadView mProgressBar;
     private RelativeLayout mMaxAdverLayout;
     private Context mContext;
@@ -150,7 +150,8 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
         mTitleView = findViewById(R.id.nur_videoName);
         mVolumeIV = findViewById(R.id.nur_video_ktvIv);
 
-        mPlayBtn = findViewById(R.id.nur_video_playIv);
+//        mPlayBtn = findViewById(R.id.nur_video_playIv);
+        mIvStop = findViewById(R.id.ivStop);
         mScreenView = findViewById(R.id.nur_video_changeWindowTv);
         mBackIv = findViewById(R.id.nur_video_backIv);
 
@@ -181,7 +182,8 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
         mLayoutBox.setOnTouchListener(new NurOnTouch(mContext, nurTouchListener));
         mLockImage.setOnClickListener(this);
         mCenterPlayBtn.setOnClickListener(this);
-        mPlayBtn.setOnClickListener(this);
+//        mPlayBtn.setOnClickListener(this);
+        mIvStop.setOnClickListener(this);
         mScreenView.setOnClickListener(this);
         mTitleControl.setOnClickListener(this);
 
@@ -334,12 +336,14 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
         if (playing || (!_startPlay && progress != videoMaxDuration)) {
             if (mCenterPlayBtn.getVisibility() != INVISIBLE) {
                 mCenterPlayBtn.setVisibility(INVISIBLE);
-                mPlayBtn.change(false);
+//                mPlayBtn.change(false);
             }
             mUiHandler.postDelayed(mUiRunnable, 50);
         } else {
             mCenterPlayBtn.setVisibility(VISIBLE);
-            mPlayBtn.change(true);
+//            mPlayBtn.change(true);
+            _startPlay = false;
+            videoMaxDuration = -11;
             if (mediaListener != null)
                 mediaListener.onEndPlay();
         }
@@ -365,7 +369,14 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
                     pause();
                 else start();
             }
-        } else if (id == R.id.nur_video_backIv) {
+        } else if (id==R.id.ivStop){
+            if (!isLock) {
+                if (mVideoView.isPlaying()){
+                    stopPlayback();
+                    mMaxAdverLayout.setVisibility(VISIBLE);
+                }
+            }
+        }else if (id == R.id.nur_video_backIv) {
             if (onBackPressListener != null) {
                 onBackPressListener.onClick(v);
             }
@@ -457,7 +468,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
         mCenterPlayBtn.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(VISIBLE);
         mProgressBar.start();
-        mPlayBtn.change(false);
+//        mPlayBtn.change(false);
         if (progress > 0) {
             mVideoView.seekTo(progress);
         }
@@ -476,7 +487,7 @@ public class AFVideoPlayer extends LinearLayout implements View.OnClickListener 
         mCenterPlayBtn.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mProgressBar.release();
-        mPlayBtn.change(true);
+//        mPlayBtn.change(true);
         mVideoView.pause();
 
         if (mediaListener != null) {

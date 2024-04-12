@@ -95,11 +95,12 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-
-        <com.chezi008.afplayer.player.NurPlayButton
-            android:id="@+id/nur_video_playIv"
+        <ImageView
+            android:id="@+id/ivStop"
             android:layout_width="40dp"
-            android:layout_height="40dp" />
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/af_ic_vstop"/>
 
         <View
             android:layout_width="0dp"
@@ -187,5 +188,6 @@
         android:id="@+id/nur_video_max_adver_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#6b7e9e"/>
+        android:background="#6b7e9e"
+        android:visibility="gone"/>
 </RelativeLayout>

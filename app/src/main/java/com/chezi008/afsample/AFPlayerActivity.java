@@ -14,9 +14,9 @@ import com.chezi008.afplayer.utils.SharePreferenceUtil;
 
 public class AFPlayerActivity extends AppCompatActivity {
 
-    private  String url = "rtsp://192.168.68.198:8554/test";
+//    private  String url = "rtsp://192.168.68.198:8554/test";
 //    private  String url = "http://192.168.110.239:8080/test";
-//    private  String url = "rtsp://admin:pqtel88886035@192.168.110.12:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
+    private  String url = "rtsp://admin:pqtel88886035@192.168.110.12:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
     private AFVideoView afVideoView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
