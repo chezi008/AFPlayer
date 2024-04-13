@@ -44,6 +44,7 @@ dependencies {
 
 
     implementation project(path: ':afplayer')
+    implementation project(path: ':uijoystick')
     //权限
     implementation 'com.github.getActivity:XXPermissions:16.0'
     //rtsp
