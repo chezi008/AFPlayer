@@ -29,7 +29,7 @@ public class AFCalendarView extends FrameLayout {
 
     public AFCalendarView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        LayoutInflater.from(context).inflate(R.layout.view_af_calendar,this);
+        LayoutInflater.from(context).inflate(R.layout.view_af_calendar, this);
         initView();
     }
 
@@ -42,11 +42,14 @@ public class AFCalendarView extends FrameLayout {
         recyclerView.addItemDecoration(new AFCalendarDecoration(new AFCalendarDecoration.GroupListener() {
             @Override
             public String getGroupName(int position) {
+                if (position > mData.size() - 1) {
+                    return "";
+                }
                 Date date = mData.get(position);
                 Calendar instance = Calendar.getInstance();
                 instance.setTime(date);
-                int month = instance.get(Calendar.MONTH);
-                return month+"月";
+                int month = instance.get(Calendar.MONTH)+1;
+                return month + "月";
             }
         }));
         recyclerView.setLayoutManager(layoutManager);
@@ -57,8 +60,8 @@ public class AFCalendarView extends FrameLayout {
         List<Date> dates = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         for (int i = 0; i <= 100; i++) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
             dates.add(calendar.getTime());
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
         }
 
         return dates;

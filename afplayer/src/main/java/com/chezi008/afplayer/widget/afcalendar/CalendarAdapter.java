@@ -16,10 +16,28 @@ import java.util.List;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
     private List<Date> dates;
-
+    private int selection = 0;//默认值
+    private OnItemListener onItemListener;
     public CalendarAdapter(List<Date> dates) {
         this.dates = dates;
     }
+
+    public void setOnItemListener(OnItemListener onItemListener)
+    {
+        this.onItemListener = onItemListener;
+    }
+    //设置点击事件
+    public interface OnItemListener
+    {
+        void onClick(View v, int pos);
+    }
+    //获取点击的位置
+    public void setDefSelect(int position)
+    {
+        this.selection = position;
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override
@@ -34,7 +52,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        holder.bindData(day + "号");
+        holder.bindData(position==0?"今日":day+"");
+        holder.textView.setTextSize(position==0?14:18);
+
+        holder.textView.setBackgroundResource(position==selection?R.drawable.bg_round:0);
     }
 
     @Override
@@ -42,13 +63,23 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         return dates.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public  class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textView;
+        public TextView textView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    if (onItemListener != null) {
+//                        onItemListener.onClick(v, getLayoutPosition());
+//                    }
+                    setDefSelect(getLayoutPosition());
+                }
+            });
+
         }
 
         public void bindData(String date) {

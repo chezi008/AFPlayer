@@ -1,24 +1,19 @@
 package com.chezi008.afplayer.widget.afcalendar;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
-import android.widget.ExpandableListView;
 
 import androidx.annotation.ColorInt;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chezi008.afplayer.R;
-
 public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
-
+    private static final String TAG = "AFCalendarDecoration";
     @ColorInt
     private int mGroupTextColor = Color.BLACK;//字体颜色，默认黑色
     private int mSideMargin = 10;   //边距 左边距
@@ -30,7 +25,7 @@ public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
     /**
      * 悬浮栏高度
      */
-    int mGroupHeight = 120;
+    private int mGroupWidth = 100;
 
     public AFCalendarDecoration(GroupListener groupListener) {
         super();
@@ -53,13 +48,14 @@ public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
         String groupId = getGroupName(pos);
         if (groupId == null) return;
         //只有是同一组的第一个才显示悬浮栏
-        if (pos == 0 || isLastInGroup(pos)) {
-            outRect.set(0, 0, 100, 0);
+        //pos == 0 || isLastInGroup(pos)
+        if (pos == 0|| isFirstInGroup(pos)) {
+            outRect.set(mGroupWidth, 0, 0, 0);
         }
     }
 
     //判断是不是组中的第一个位置
-//根据前一个组名，判断当前是否为新的组
+    //根据前一个组名，判断当前是否为新的组
     private boolean isFirstInGroup(int pos) {
         if (pos == 0) {
             return true;
@@ -81,6 +77,7 @@ public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
     }
 
 
+
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         super.onDrawOver(c, parent, state);
@@ -96,12 +93,11 @@ public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
             preGroupName = currentGroupName;
             currentGroupName = getGroupName(position);
             if (currentGroupName == null || TextUtils.equals(currentGroupName, preGroupName)){
-
                 continue;
             }
 
             int viewBottom = view.getBottom();
-            float top = Math.max(mGroupHeight, view.getTop());//top 决定当前顶部第一个悬浮Group的位置
+            float top = view.getTop();//top 决定当前顶部第一个悬浮Group的位置
             if (position + 1 < itemCount) {
                 //获取下个GroupName
                 String nextGroupName = getGroupName(position + 1);
@@ -110,12 +106,20 @@ public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
                     top = viewBottom;
                 }
             }
+//            Log.d(TAG, "onDrawOver: top:"+view.getBottom());
             //根据top绘制group
-            c.drawRect(right, top+20, right-100, 0, mGroutPaint);
+            //根据top绘制group
+            c.drawRect(left, top , left+mGroupWidth, viewBottom, mGroutPaint);
+            c.drawRect(view.getLeft(), top , view.getLeft()+mGroupWidth, viewBottom, mGroutPaint);
+//            c.drawRect(mGroupWidth, viewBottom, 0, 0, mGroutPaint);
             Paint.FontMetrics fm = mTextPaint.getFontMetrics();
             //文字竖直居中显示
-            float baseLine = top - (mGroupHeight - (fm.bottom - fm.top)) / 2 - fm.bottom;
-            c.drawText(currentGroupName, right-100 , baseLine, mTextPaint);
+            float baseLine = top - (viewBottom - (fm.bottom - fm.top)) / 2 - fm.bottom;
+            baseLine  = (fm.bottom - fm.top)/1f;
+            Log.d(TAG, "onDrawOver: baseLine:"+baseLine);
+            float textWidth = mTextPaint.measureText(currentGroupName);
+            float centerX = (mGroupWidth-textWidth)/2f;
+            c.drawText(currentGroupName, centerX , baseLine, mTextPaint);
         }
     }
 
