@@ -28,6 +28,7 @@
             android:onClick="stopV"/>
     </LinearLayout>
     <com.chezi008.afplayer.widget.AFRockerView
+        android:id="@+id/afRockerView"
         android:layout_width="170dp"
         android:layout_height="170dp"/>
 </LinearLayout>

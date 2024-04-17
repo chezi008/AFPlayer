@@ -18,6 +18,8 @@ import com.chezi008.afplayer.R;
 import java.util.Date;
 
 public class AFRockerView extends AppCompatImageView {
+    
+    private RockerViewClickListener rockerViewClickListener;
     private static final String TAG = "AFRockerView";
     /**
      * 中心点的坐标X
@@ -28,11 +30,12 @@ public class AFRockerView extends AppCompatImageView {
      */
     private float mCoreY = 0f;
     private long mTouchTime;
-    private int[] resArr = new int[]{R.mipmap.af_rocker_u,R.mipmap.af_rocker_r,R.mipmap.af_rocker_d,R.mipmap.af_rocker_l};
-    private Handler mHandler = new Handler(Looper.getMainLooper()){
+    private int mDirection;
+    private int[] resArr = new int[]{R.mipmap.af_rocker_u, R.mipmap.af_rocker_r, R.mipmap.af_rocker_d, R.mipmap.af_rocker_l};
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            if (msg.what==0){
+            if (msg.what == 0) {
                 setImageResource(R.mipmap.af_rocker_org);
             }
         }
@@ -79,21 +82,24 @@ public class AFRockerView extends AppCompatImageView {
                     // 计算这根线的角度
                     double angle = getRotationBetweenLines(mCoreX, mCoreY, event.getX(), event.getY());
                     // 这个angle的角度是从加上偏移角度，所以需要计算一下
-                    angle = (angle  + sweepAngle / 2) % 360;
+                    angle = (angle + sweepAngle / 2) % 360;
                     // 根据角度得出点击的是那个扇形
-                    int count = (int) (angle / sweepAngle);
-                    setImageResource(resArr[count]);
-                    Log.d(TAG, "onTouchEvent: count"+count);
+                    mDirection = (int) (angle / sweepAngle);
+                    setImageResource(resArr[mDirection]);
+                    Log.d(TAG, "onTouchEvent: count:" + mDirection);
                 } else {
                     //点击了外部
-
+                    Log.d(TAG, "onTouchEvent: 点击外部");
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (System.currentTimeMillis()- mTouchTime < 500) {
-                    //点击小于400毫秒算点击
+//                if (System.currentTimeMillis() - mTouchTime < 400) {
+//                    //点击小于400毫秒算点击
+//                }
+                if (rockerViewClickListener!=null) {
+                    rockerViewClickListener.onClick(mDirection);
                 }
-                mHandler.sendEmptyMessageDelayed(0,200);
+                mHandler.sendEmptyMessageDelayed(0, 200);
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE:
@@ -104,6 +110,9 @@ public class AFRockerView extends AppCompatImageView {
         return true;
     }
 
+    public void setRockerViewClickListener(RockerViewClickListener rockerViewClickListener) {
+        this.rockerViewClickListener = rockerViewClickListener;
+    }
 
     /**
      * 求两个点之间的距离
@@ -168,4 +177,7 @@ public class AFRockerView extends AppCompatImageView {
         return (int) (dpValue * density + 0.5f);
     }
 
+    public interface RockerViewClickListener {
+        void onClick(int direction);
+    }
 }
