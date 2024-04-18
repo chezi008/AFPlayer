@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
@@ -66,89 +67,68 @@ public class AFCalendarDecoration extends RecyclerView.ItemDecoration {
         }
     }
 
-    private boolean isLastInGroup(int pos) {
-        if (pos == 200) {
-            return true;
-        } else {
-            String prevGroupId = getGroupName(pos + 1);
-            String groupId = getGroupName(pos);
-            return !TextUtils.equals(prevGroupId, groupId);
-        }
-    }
-
-
-
     @Override
-    public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        super.onDrawOver(c, parent, state);
-        final int itemCount = state.getItemCount();
+    public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        super.onDraw(c, parent, state);
+        final int left = parent.getPaddingLeft();
+        final int right = parent.getWidth() - parent.getPaddingRight();
         final int childCount = parent.getChildCount();
-        final int left = parent.getLeft() + parent.getPaddingLeft();
-        final int right = parent.getRight() - parent.getPaddingRight();
+
         String preGroupName;      //标记上一个item对应的Group
         String currentGroupName = null;       //当前item对应的Group
         for (int i = 0; i < childCount; i++) {
-            View view = parent.getChildAt(i);
-            int position = parent.getChildAdapterPosition(view);
+            final View child = parent.getChildAt(i);
+            final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child
+                    .getLayoutParams();
+            int position = params.getViewLayoutPosition();
             preGroupName = currentGroupName;
             currentGroupName = getGroupName(position);
             if (currentGroupName == null || TextUtils.equals(currentGroupName, preGroupName)){
                 continue;
             }
 
-            int viewBottom = view.getBottom();
-            float top = view.getTop();//top 决定当前顶部第一个悬浮Group的位置
-            if (position + 1 < itemCount) {
-                //获取下个GroupName
-                String nextGroupName = getGroupName(position + 1);
-                //下一组的第一个View接近头部
-                if (!currentGroupName.equals(nextGroupName) && viewBottom < top) {
-                    top = viewBottom;
-                }
+            if (position > -1) {
+                c.drawRect(child.getLeft()-mGroupWidth, child.getTop() , child.getLeft(), child.getBottom(), mGroutPaint);
+                Paint.FontMetrics fm = mTextPaint.getFontMetrics();
+                //文字竖直居中显示
+                float baseLine = child.getBottom() - (child.getBottom()-child.getTop() - (fm.bottom - fm.top)) / 2 - fm.bottom;
+                float textWidth = mTextPaint.measureText(currentGroupName);
+                float centerX = child.getLeft()-mGroupWidth+(mGroupWidth-textWidth)/2f;
+                c.drawText(currentGroupName, centerX , baseLine, mTextPaint);
             }
-//            Log.d(TAG, "onDrawOver: top:"+view.getBottom());
-            //根据top绘制group
-            //根据top绘制group
-            c.drawRect(left, top , left+mGroupWidth, viewBottom, mGroutPaint);
-            c.drawRect(view.getLeft(), top , view.getLeft()+mGroupWidth, viewBottom, mGroutPaint);
-//            c.drawRect(mGroupWidth, viewBottom, 0, 0, mGroutPaint);
-            Paint.FontMetrics fm = mTextPaint.getFontMetrics();
-            //文字竖直居中显示
-            float baseLine = top - (viewBottom - (fm.bottom - fm.top)) / 2 - fm.bottom;
-            baseLine  = (fm.bottom - fm.top)/1f;
-            Log.d(TAG, "onDrawOver: baseLine:"+baseLine);
-            float textWidth = mTextPaint.measureText(currentGroupName);
-            float centerX = (mGroupWidth-textWidth)/2f;
-            c.drawText(currentGroupName, centerX , baseLine, mTextPaint);
         }
     }
 
 
-    /**
-     * 绘制悬浮框
-     *
-     * @param c
-     * @param realPosition
-     * @param left
-     * @param right
-     * @param bottom
-     */
-//    private void drawDecoration(Canvas c, int realPosition, int left, int right, int bottom) {
-//        String curGroupName;       //当前item对应的Group
-//        int firstPositionInGroup = getFirstInGroupWithCash(realPosition);
-//        curGroupName = getGroupName(firstPositionInGroup);
-//        //根据top绘制group背景
-//        c.drawRect(left, bottom - mGroupHeight, right, bottom, mGroutPaint);
-//        if (curGroupName == null) {
-//            return;
-//        }
-//        Paint.FontMetrics fm = mTextPaint.getFontMetrics();
-//        //文字竖直居中显示
-//        float baseLine = bottom - (mGroupHeight - (fm.bottom - fm.top)) / 2 - fm.bottom;
-//        //获取文字宽度
-//        mSideMargin = Math.abs(mSideMargin);
-//        c.drawText(curGroupName, left + mSideMargin, baseLine, mTextPaint);
-//    }
+
+
+    @Override
+    public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+        super.onDrawOver(c, parent, state);
+        final int left = parent.getLeft() + parent.getPaddingLeft();
+        final int right = parent.getRight() - parent.getPaddingRight();
+        // Find the first visible item position
+        int firstVisiblePosition = ((RecyclerView.LayoutParams) parent.getChildAt(0).getLayoutParams()).getViewAdapterPosition();
+        // Check if the next item is different and draw sticky view if so
+        if (firstVisiblePosition + 1 < parent.getAdapter().getItemCount()) {
+            int nextItemPosition = ((RecyclerView.LayoutParams) parent.getChildAt(1).getLayoutParams()).getViewAdapterPosition();
+            if (nextItemPosition != firstVisiblePosition) {
+                View child = parent.findViewHolderForAdapterPosition(firstVisiblePosition).itemView;
+
+
+                c.drawRect(left, child.getTop() , left+mGroupWidth, child.getBottom(), mGroutPaint);
+                Paint.FontMetrics fm = mTextPaint.getFontMetrics();
+                //文字竖直居中显示
+                String gName = getGroupName(firstVisiblePosition);
+                float baseLine = child.getBottom() - (child.getBottom()-child.getTop() - (fm.bottom - fm.top)) / 2 - fm.bottom;
+                float textWidth = mTextPaint.measureText(gName);
+                float centerX = (mGroupWidth-textWidth)/2f;
+                c.drawText(gName, centerX , baseLine, mTextPaint);
+            }
+        }
+
+    }
+
     /**
      * 获取组名
      *

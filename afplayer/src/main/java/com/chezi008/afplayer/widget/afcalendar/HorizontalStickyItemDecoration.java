@@ -51,7 +51,43 @@ public class HorizontalStickyItemDecoration extends RecyclerView.ItemDecoration 
 
         // 绘制悬停的日期背景
         // 这里只是简单地绘制一个矩形，你可以根据需要进行定制
-        c.drawRect(left, top, right, bottom, mGroutPaint);
+//        c.drawRect(left, top, right, bottom, mGroutPaint);
+
+//        c.drawText("tt",50,50,mTextPaint);
+    }
+
+    @Override
+    public void onDrawOver(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        super.onDrawOver(c, parent, state);
+
+        int top = 0;
+        int parentPaddingLeft = parent.getPaddingLeft();
+        int parentPaddingRight = parent.getWidth() - parent.getPaddingRight();
+
+        // Find the first visible item position
+        int firstVisiblePosition = ((RecyclerView.LayoutParams) parent.getChildAt(0).getLayoutParams()).getViewAdapterPosition();
+
+        // Check if the next item is different and draw sticky view if so
+        if (firstVisiblePosition + 1 < parent.getAdapter().getItemCount()) {
+            int nextItemPosition = ((RecyclerView.LayoutParams) parent.getChildAt(1).getLayoutParams()).getViewAdapterPosition();
+            if (nextItemPosition != firstVisiblePosition) {
+                View child = parent.findViewHolderForAdapterPosition(firstVisiblePosition).itemView;
+
+                // Get the bottom of the sticky view
+                int bottom = Math.min(child.getBottom(), 100);
+
+                // Adjust top position for sticky view
+                top = Math.max(child.getTop(), parent.getPaddingTop());
+                top = Math.min(top, bottom - 100);
+
+//                // Set bounds for sticky view
+//                stickyView.layout(parentPaddingLeft, top, parentPaddingRight, top + stickyView.getHeight());
+//
+//                // Draw the sticky view
+//                drawView(c, stickyView);
+                c.drawRect(child.getLeft(), top, child.getLeft()+100, bottom, mGroutPaint);
+            }
+        }
     }
 }
 
