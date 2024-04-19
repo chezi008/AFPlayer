@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +31,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  */
 public class RtspStreamActivity extends AppCompatActivity implements TextureView.SurfaceTextureListener {
     private static final String TAG = "RtspStreamActvity";
-    private String url = "rtsp://admin:pqtel88886035@192.168.110.12:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
+    private String url = "rtsp://admin:pqtel88886035@192.168.110.18:554/cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif";
     //    private  String url = "rtsp://192.168.68.198:8554/test";
     private IjkMediaPlayer player;
     private Surface surface;
@@ -86,7 +87,7 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 1);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "threads", 1);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "sync-av-start", 0);
-        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
+        player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
         player.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "protocol_whitelist", "ijkio,crypto,file,http,https,tcp,tls,udp"); // 属性设置支持，转入我们自定义的播放类
@@ -154,7 +155,7 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
             AtomicBoolean stopped = new AtomicBoolean(false);
             try {
 //                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.68.198", 8554, 10000);
-                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.110.12", 554, 10000);
+                Socket socketAndConnect = NetUtils.createSocketAndConnect("192.168.110.18", 554, 10000);
                 RtspClient rtspClient = new RtspClient.Builder(socketAndConnect, url, stopped, rtspClientListener)
                         .requestVideo(true)
 //                            .requestAudio(true)
@@ -174,5 +175,11 @@ public class RtspStreamActivity extends AppCompatActivity implements TextureView
     public static void start(Context context) {
         Intent starter = new Intent(context, RtspStreamActivity.class);
         context.startActivity(starter);
+    }
+
+    public void stop(View view) {
+        player.stop();
+        player.release();
+        player = null;
     }
 }

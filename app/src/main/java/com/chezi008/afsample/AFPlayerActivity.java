@@ -85,4 +85,6 @@ public class AFPlayerActivity extends AppCompatActivity {
     public void stopV(View view) {
         afVideoView.stopPlay();
     }
+
+
 }
