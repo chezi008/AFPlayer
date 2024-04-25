@@ -5254,7 +5254,7 @@ int ffp_record_file(FFPlayer *ffp, AVPacket *packet)
         av_new_packet(pkt, 0);
         // 解决缓存为null导致崩溃的问题
         // packet->buf->size > 2 &&0 == av_packet_ref(pkt, packet)
-        if (0 == av_packet_ref(pkt, packet))
+        if (packet->buf->size > 2 &&0 == av_packet_ref(pkt, packet))
         {
             pthread_mutex_lock(&ffp->record_mutex);
             // 录制的第一帧，时间从0开始
@@ -5298,8 +5298,8 @@ int ffp_record_file(FFPlayer *ffp, AVPacket *packet)
             out_stream = ffp->m_ofmt_ctx->streams[pkt->stream_index];
             // out_stream->codec->time_base.den = in_stream->codec->time_base.den;
             // out_stream->codec->time_base.num = in_stream->codec->time_base.num;
-            av_log(ffp, AV_LOG_ERROR, "%d out_stream time_base.den:%d time_base.num:%d\n", pkt->stream_index, out_stream->codec->time_base.den, out_stream->codec->time_base.num);
-            av_log(ffp, AV_LOG_ERROR, "%d time_base.den:%d time_base.num:%d\n", pkt->stream_index, in_stream->codec->time_base.den, in_stream->codec->time_base.num);
+            av_log(ffp, AV_LOG_INFO, "%d out_stream time_base.den:%d time_base.num:%d\n", pkt->stream_index, out_stream->codec->time_base.den, out_stream->codec->time_base.num);
+            av_log(ffp, AV_LOG_INFO, "%d time_base.den:%d time_base.num:%d\n", pkt->stream_index, in_stream->codec->time_base.den, in_stream->codec->time_base.num);
             // 将packet中的各时间值从输入流封装格式时间基转换到输出流封装格式时间基,跟下面方法一样
             av_packet_rescale_ts(pkt, in_stream->time_base, out_stream->time_base);
             // 转换PTS/DTS
@@ -5307,7 +5307,7 @@ int ffp_record_file(FFPlayer *ffp, AVPacket *packet)
             // pkt->dts = av_rescale_q_rnd(pkt->dts, in_stream->time_base, out_stream->time_base, (AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX));
             // pkt->duration = av_rescale_q(pkt->duration, in_stream->time_base, out_stream->time_base);
             // pkt->pos = -1;
-            av_log(ffp, AV_LOG_ERROR, "last duration: %lld", pkt->duration);
+            av_log(ffp, AV_LOG_INFO, "last duration: %lld", pkt->duration);
             // 写入一个AVPacket到输出文件,如果遇到报错的帧，那么直接跳过ret赋值0，跳过该帧
             // 解决in_stream为空时写入空packet导致Error muxing packet错误的问题；
             if (in_stream && (ret = av_interleaved_write_frame(ffp->m_ofmt_ctx, pkt)) < 0)
@@ -5315,6 +5315,7 @@ int ffp_record_file(FFPlayer *ffp, AVPacket *packet)
                 av_log(ffp, AV_LOG_ERROR, "Error muxing packet %d", ret);
                 ret = 0;
             }
+            av_log(ffp, AV_LOG_INFO, "last duration: av_interleaved_write_frame end");
             av_packet_unref(pkt);
             pthread_mutex_unlock(&ffp->record_mutex);
         }
